@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Board {
+//    test2
     int x=100;
     int y=100;
     List<Robot> robotList = new ArrayList<Robot>();
