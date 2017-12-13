@@ -82,5 +82,12 @@ public class GUI extends Application {
         double x = board.mainRobot.getPos_X();
         double y = board.mainRobot.getPos_Y();
         gc.fillRect(x,y,10,10);
+        gc.setFill(Color.RED);
+        for (int i=0;i<3;i++){
+            Robot robot=board.robotList.get(board.firendlyRobots[i]);
+            x=robot.getPos_X();
+            y=robot.getPos_Y();
+            gc.fillRect(x,y,6,6);
+        }
     }
 }

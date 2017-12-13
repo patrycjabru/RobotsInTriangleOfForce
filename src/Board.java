@@ -18,11 +18,13 @@ public class Board {
     Map<Integer, Double> sumBC;
     Map<Integer, Double> sumCA;
     Map<Integer, Double> sumABC;
+    int[] firendlyRobots;
     Board(int numberOfRobots) {
         createTransmitters();
         createRobots(numberOfRobots);
         createSignalMaps();
         sum();
+        this.firendlyRobots=findFriendlyRobots();
     }
     void createRobots(int number) {
         Random random=new Random();
@@ -68,7 +70,7 @@ public class Board {
             sumABC.put(i,robotList.get(i).getSignalA()+robotList.get(i).getSignalB()+robotList.get(i).getSignalB());
         }
     }
-    int[] findFriendlyRobots() {
+    int[] findFriendlyRobots() {    //DOESN'T WORK
         double minAB=mainRobot.getSignalA()-signalsA.get(0)+mainRobot.getSignalB()-signalsB.get(0);
         int indexAB=0;
         double minBC=mainRobot.getSignalB()-signalsB.get(0)+mainRobot.getSignalC()-signalsC.get(0);
@@ -90,6 +92,7 @@ public class Board {
             }
         }
         int[] output={indexAB,indexBC,indexCA};
+        firendlyRobots=output;
         return output;
     }
     boolean checkPosition() {
