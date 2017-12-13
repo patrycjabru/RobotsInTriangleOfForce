@@ -1,8 +1,6 @@
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 public class Board {
 //    test2
@@ -13,20 +11,17 @@ public class Board {
     Transmitter A = new Transmitter();
     Transmitter B = new Transmitter();
     Transmitter C = new Transmitter();
-    Map<Integer, Double> signalsA;
-    Map<Integer, Double> signalsB;
-    Map<Integer, Double> signalsC;
-//    List<Double> sumAB = new ArrayList<>();
-//    List<Double> sumBC = new ArrayList<>();
-//    List<Double> sumCA = new ArrayList<>();
-//    List<Double> sumABC = new ArrayList<>();
+    Map<Integer, Double> signalsA = new HashMap<>();
+    Map<Integer, Double> signalsB = new HashMap<>();
+    Map<Integer, Double> signalsC = new HashMap<>();
     Map<Integer, Double> sumAB;
-    Map<Integer, Double> sumAC;
+    Map<Integer, Double> sumBC;
     Map<Integer, Double> sumCA;
     Map<Integer, Double> sumABC;
     Board(int numberOfRobots) {
         createTransmitters();
         createRobots(numberOfRobots);
+        createSignalMaps();
         sum();
     }
     void createRobots(int number) {
@@ -62,20 +57,53 @@ public class Board {
         }
     }
     void sum() {
-//        for (int i=0;i<robotList.size();i++) {
-//            sumAB.add(robotList.get(i).getSignalA()+robotList.get(i).getSignalB());
-//            sumBC.add(robotList.get(i).getSignalB()+robotList.get(i).getSignalC());
-//            sumCA.add(robotList.get(i).getSignalC()+robotList.get(i).getSignalA());
-//            sumABC.add(robotList.get(i).getSignalA()+robotList.get(i).getSignalB()+robotList.get(i).getSignalC());
-//        }
+        sumAB = new HashMap<>();
+        sumBC = new HashMap<>();
+        sumCA = new HashMap<>();
+        sumABC = new HashMap<>();
+        for (int i=0;i<robotList.size();i++) {
+            sumAB.put(i,robotList.get(i).getSignalA()+robotList.get(i).getSignalB());
+            sumBC.put(i,robotList.get(i).getSignalB()+robotList.get(i).getSignalC());
+            sumCA.put(i,robotList.get(i).getSignalC()+robotList.get(i).getSignalA());
+            sumABC.put(i,robotList.get(i).getSignalA()+robotList.get(i).getSignalB()+robotList.get(i).getSignalB());
+        }
+    }
+    int[] findFriendlyRobots() {
+        double minAB=mainRobot.getSignalA()-signalsA.get(0)+mainRobot.getSignalB()-signalsB.get(0);
+        int indexAB=0;
+        double minBC=mainRobot.getSignalB()-signalsB.get(0)+mainRobot.getSignalC()-signalsC.get(0);
+        int indexBC=0;
+        double minCA=mainRobot.getSignalC()-signalsC.get(0)+mainRobot.getSignalA()-signalsA.get(0);
+        int indexCA=0;
+        for (int i=0;i<robotList.size();i++) {
+            if (mainRobot.getSignalA()-signalsA.get(i)+mainRobot.getSignalB()-signalsB.get(i)<minAB) {
+                minAB = mainRobot.getSignalA()-signalsA.get(i)+mainRobot.getSignalB()-signalsB.get(i);
+                indexAB = i;
+            }
+            if (mainRobot.getSignalB()-signalsB.get(i)+mainRobot.getSignalC()-signalsC.get(i)<minBC) {
+                minBC = mainRobot.getSignalB()-signalsB.get(i)+mainRobot.getSignalC()-signalsC.get(i);
+                indexBC = i;
+            }
+            if (mainRobot.getSignalC()-signalsC.get(i)+mainRobot.getSignalA()-signalsA.get(i)<minCA) {
+                minCA = mainRobot.getSignalC()-signalsC.get(i)+mainRobot.getSignalA()-signalsA.get(i);
+                indexCA = i;
+            }
+        }
+        int[] output={indexAB,indexBC,indexCA};
+        return output;
     }
     boolean checkPosition() {
-        System.out.println(mainRobot.getSignalA());
-        System.out.println(mainRobot.getSignalB());
-        System.out.println(mainRobot.getSignalC());
-//        if (mainRobot.getSignalA()+mainRobot.getSignalB()+mainRobot.getSignalC()>0)
-//            return true;
-        return false;
+        int[] friendlyRobotsIndexes=findFriendlyRobots();
+        System.out.println(friendlyRobotsIndexes[0]);
+        System.out.println(friendlyRobotsIndexes[1]);
+        System.out.println(friendlyRobotsIndexes[2]);
+        if (sumABC.get(friendlyRobotsIndexes[0])>mainRobot.getSignalA()+mainRobot.getSignalB()+mainRobot.getSignalC())
+            return false;
+        if (sumABC.get(friendlyRobotsIndexes[1])>mainRobot.getSignalA()+mainRobot.getSignalB()+mainRobot.getSignalC())
+            return false;
+        if (sumABC.get(friendlyRobotsIndexes[2])>mainRobot.getSignalA()+mainRobot.getSignalB()+mainRobot.getSignalC())
+            return false;
+        return true;
     }
     public int getX() {
         return x;
