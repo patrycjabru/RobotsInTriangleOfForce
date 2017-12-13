@@ -4,8 +4,8 @@ import java.util.List;
 
 public class Board {
 //    test2
-    int x=100;
-    int y=100;
+    int x=600;
+    int y=400;
     List<Robot> robotList = new ArrayList<Robot>();
     Robot mainRobot;
     Transmitter A = new Transmitter();

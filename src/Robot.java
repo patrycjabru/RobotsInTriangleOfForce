@@ -39,4 +39,13 @@ public class Robot {
     public Double getSignalC() {
         return signalC;
     }
+    public Double getPos_X() {
+        return pos_X;
+    }
+
+    public Double getPos_Y() {
+        return pos_Y;
+    }
+
+
 }
