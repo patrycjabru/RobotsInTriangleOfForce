@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -18,13 +17,13 @@ public class Board {
     Map<Integer, Double> sumBC;
     Map<Integer, Double> sumCA;
     Map<Integer, Double> sumABC;
-    int[] firendlyRobots;
+    int[] friendlyRobots;
     Board(int numberOfRobots) {
         createTransmitters();
         createRobots(numberOfRobots);
         createSignalMaps();
         sum();
-        this.firendlyRobots=findFriendlyRobots();
+        this.friendlyRobots =findFriendlyRobots();
     }
     void createRobots(int number) {
         Random random=new Random();
@@ -32,15 +31,15 @@ public class Board {
             double x = random.nextDouble()*this.x;
             double y = random.nextDouble()*this.y;
             Robot robot=new Robot(x,y);
-            robot.setToA(A.x, A.y);
-            robot.setToB(B.x, B.y);
-            robot.setToC(C.x, C.y);
+            robot.setToA(A.x, A.y,A.amplitude);
+            robot.setToB(B.x, B.y,B.amplitude);
+            robot.setToC(C.x, C.y,C.amplitude);
             robotList.add(robot);
         }
         mainRobot=new Robot(random.nextDouble()*this.x,random.nextDouble()*this.y);
-        mainRobot.setToA(A.x, A.y);
-        mainRobot.setToB(B.x, B.y);
-        mainRobot.setToC(C.x, C.y);
+        mainRobot.setToA(A.x, A.y,A.amplitude);
+        mainRobot.setToB(B.x, B.y,B.amplitude);
+        mainRobot.setToC(C.x, C.y,C.amplitude);
     }
     void createTransmitters() {
         Random random = new Random();
@@ -71,28 +70,64 @@ public class Board {
         }
     }
     int[] findFriendlyRobots() {    //DOESN'T WORK
-        double minAB=mainRobot.getSignalA()-signalsA.get(0)+mainRobot.getSignalB()-signalsB.get(0);
+//        double minAB=mainRobot.getSignalA()-signalsA.get(0)+mainRobot.getSignalB()-signalsB.get(0);
+//        int indexAB=0;
+//        double minBC=mainRobot.getSignalB()-signalsB.get(0)+mainRobot.getSignalC()-signalsC.get(0);
+//        int indexBC=0;
+//        double minCA=mainRobot.getSignalC()-signalsC.get(0)+mainRobot.getSignalA()-signalsA.get(0);
+//        int indexCA=0;
+//        for (int i=0;i<robotList.size();i++) {
+//            if (mainRobot.getSignalA()-signalsA.get(i)+mainRobot.getSignalB()-signalsB.get(i)<minAB) {
+//                minAB = mainRobot.getSignalA()-signalsA.get(i)+mainRobot.getSignalB()-signalsB.get(i);
+//                indexAB = i;
+//            }
+//            if (mainRobot.getSignalB()-signalsB.get(i)+mainRobot.getSignalC()-signalsC.get(i)<minBC) {
+//                minBC = mainRobot.getSignalB()-signalsB.get(i)+mainRobot.getSignalC()-signalsC.get(i);
+//                indexBC = i;
+//            }
+//            if (mainRobot.getSignalC()-signalsC.get(i)+mainRobot.getSignalA()-signalsA.get(i)<minCA) {
+//                minCA = mainRobot.getSignalC()-signalsC.get(i)+mainRobot.getSignalA()-signalsA.get(i);
+//                indexCA = i;
+//            }
+//        }
+//        int[] output={indexAB,indexBC,indexCA};
+//        friendlyRobots =output;
+//        return output;
+        double eps=10;
+        //AB axis
+        double ABRobotSignalA = mainRobot.getSignalA();
+        double ABRobotSignalB = mainRobot.getSignalB();
+        double minDiffAB=1000;
         int indexAB=0;
-        double minBC=mainRobot.getSignalB()-signalsB.get(0)+mainRobot.getSignalC()-signalsC.get(0);
-        int indexBC=0;
-        double minCA=mainRobot.getSignalC()-signalsC.get(0)+mainRobot.getSignalA()-signalsA.get(0);
-        int indexCA=0;
-        for (int i=0;i<robotList.size();i++) {
-            if (mainRobot.getSignalA()-signalsA.get(i)+mainRobot.getSignalB()-signalsB.get(i)<minAB) {
-                minAB = mainRobot.getSignalA()-signalsA.get(i)+mainRobot.getSignalB()-signalsB.get(i);
+        for (int i=0;i<signalsA.size();i++) {
+            if ((Math.abs(signalsA.get(i) - ABRobotSignalA))+(Math.abs(signalsB.get(i) - ABRobotSignalB))<minDiffAB && signalsC.get(i)-mainRobot.getSignalC()>eps) {
                 indexAB = i;
+                minDiffAB = (Math.abs(signalsA.get(i) - ABRobotSignalA))+(Math.abs(signalsB.get(i) - ABRobotSignalB));
             }
-            if (mainRobot.getSignalB()-signalsB.get(i)+mainRobot.getSignalC()-signalsC.get(i)<minBC) {
-                minBC = mainRobot.getSignalB()-signalsB.get(i)+mainRobot.getSignalC()-signalsC.get(i);
+        }
+        //BC axis
+        double BCRobotSignalB = mainRobot.getSignalB();
+        double BCRobotSignalC = mainRobot.getSignalC();
+        double minDiffBC=1000;
+        int indexBC=0;
+        for (int i=0;i<signalsB.size();i++) {
+            if ((Math.abs(signalsB.get(i) - BCRobotSignalB))+(Math.abs(signalsC.get(i) - BCRobotSignalC))<minDiffBC && signalsA.get(i)-mainRobot.getSignalA()>eps) {
                 indexBC = i;
+                minDiffBC = (Math.abs(signalsB.get(i) - BCRobotSignalB))+(Math.abs(signalsC.get(i) - BCRobotSignalC));
             }
-            if (mainRobot.getSignalC()-signalsC.get(i)+mainRobot.getSignalA()-signalsA.get(i)<minCA) {
-                minCA = mainRobot.getSignalC()-signalsC.get(i)+mainRobot.getSignalA()-signalsA.get(i);
+        }
+        //CA axis
+        double CARobotSignalC = mainRobot.getSignalC();
+        double CARobotSignalA = mainRobot.getSignalA();
+        double minDiffCA=1000;
+        int indexCA=0;
+        for (int i=0;i<signalsC.size();i++) {
+            if ((Math.abs(signalsC.get(i) - CARobotSignalC))+(Math.abs(signalsA.get(i) - CARobotSignalA))<minDiffCA && signalsB.get(i)-mainRobot.getSignalB()>eps) {
                 indexCA = i;
+                minDiffCA = (Math.abs(signalsC.get(i) - CARobotSignalC))+(Math.abs(signalsA.get(i) - CARobotSignalA));
             }
         }
         int[] output={indexAB,indexBC,indexCA};
-        firendlyRobots=output;
         return output;
     }
     boolean checkPosition() {

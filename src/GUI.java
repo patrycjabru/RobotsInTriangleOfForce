@@ -5,15 +5,12 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
-import java.awt.*;
 
 public class GUI extends Application {
     Board board;
@@ -84,7 +81,7 @@ public class GUI extends Application {
         gc.fillRect(x,y,10,10);
         gc.setFill(Color.RED);
         for (int i=0;i<3;i++){
-            Robot robot=board.robotList.get(board.firendlyRobots[i]);
+            Robot robot=board.robotList.get(board.friendlyRobots[i]);
             x=robot.getPos_X();
             y=robot.getPos_Y();
             gc.fillRect(x,y,6,6);
